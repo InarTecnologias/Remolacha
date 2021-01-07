@@ -1,8 +1,0 @@
-Este sistema esta compuesto de un servidor que espera información de pintado que ha de recibir de un servidor tercero:
-
-
-          127.0.0.1:8080                    ---------->                   127.0.0.1:5000
-(Servidor que contiene información y API)                   (Cliente web donde se encuentra la remolacha)
-
-
-Lo que se encuentra entre medio es una API que trata y procesa los mensajes que llegan desde el servidor tercero y enviando los cambios a realizar sobre el cliente.
