@@ -30,35 +30,38 @@ normalizarSoil=2000
 def uploadThingSpeak():
 	
 	while True:
-		#get the current timestamp
-		#current date and time
-		now = datetime.now()
-		#date and time format: dd/mm/YYYY H:M:S
-		format = "%d/%m/%Y %H:%M:%S %z%p"
-		#format datetime using strftime() 
-		time1 = now.strftime(format)
-		 
-		logging.info("Formatted DateTime:", time1)
-		lockThings.acquire()
-		bulk_update = {
-			"write_api_key": "VMUFLH5MHCFIPJEF",
-			"updates": [{
-					"created_at": time1,
-					"field1": state[0],
-					"field2": state[1],
-					"field3": state[2],
-					"field4": state[3],
-					"field5": state[4],
-					"field6": state[5],
-					"field7": state[6],
-					"field8": state[7],
-				}
-			]
-		}
-		lockThings.release()
-		logging.info("Envio json: " + str(bulk_update))
-		x = requests.post(url, json = bulk_update)
-		time.sleep(120)
+		try:
+			#get the current timestamp
+			#current date and time
+			now = datetime.now()
+			#date and time format: dd/mm/YYYY H:M:S
+			format = "%d/%m/%Y %H:%M:%S %z%p"
+			#format datetime using strftime() 
+			time1 = now.strftime(format)
+			 
+			logging.info("Formatted DateTime:", time1)
+			lockThings.acquire()
+			bulk_update = {
+				"write_api_key": "VMUFLH5MHCFIPJEF",
+				"updates": [{
+						"created_at": time1,
+						"field1": state[0],
+						"field2": state[1],
+						"field3": state[2],
+						"field4": state[3],
+						"field5": state[4],
+						"field6": state[5],
+						"field7": state[6],
+						"field8": state[7],
+					}
+				]
+			}
+			lockThings.release()
+			logging.info("Envio json: " + str(bulk_update))
+			x = requests.post(url, json = bulk_update)
+			time.sleep(120)
+		except Error:
+			print(Error)
 		
 x = threading.Thread(target=uploadThingSpeak, args=())
 x.start()
