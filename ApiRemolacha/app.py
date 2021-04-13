@@ -8,6 +8,8 @@ from datetime import datetime, date
 import random
 import time
 import threading
+import logging
+logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG)
 
 #lock para dar prioridad a botones sobre sensores
 lockThings = threading.Semaphore(1)
@@ -36,7 +38,7 @@ def uploadThingSpeak():
 		#format datetime using strftime() 
 		time1 = now.strftime(format)
 		 
-		print("Formatted DateTime:", time1)
+		logging.info("Formatted DateTime:", time1)
 		lockThings.acquire()
 		bulk_update = {
 			"write_api_key": "VMUFLH5MHCFIPJEF",
@@ -54,7 +56,7 @@ def uploadThingSpeak():
 			]
 		}
 		lockThings.release()
-		print("Envio json: " + str(bulk_update))
+		logging.info("Envio json: " + str(bulk_update))
 		x = requests.post(url, json = bulk_update)
 		time.sleep(120)
 		
@@ -83,13 +85,13 @@ def guardarEstado(state, cambio):
 
 @socketio.on('connect')
 def test_connect():
-	print("Estoy conectado")
+	logging.info("Estoy conectado")
 	json = { "temperature" : 0, "soil" : 0, "air" : 0}
 	emit('message', {'data':json})
 
 @socketio.on('message')
 def handle_message(message):
-	print(message)
+	logging.info(message)
 
 @socketio.on('cambio')
 def handole_event(cambio):
@@ -121,18 +123,18 @@ def handole_event(cambio):
 	x = threading.Thread(target=guardarEstado, args=(state,cambio,))
 	x.start()
 	if enviar == True:
-		print(update)
+		logging.info(update)
 		json = {"data": update}
-		print(json)
+		logging.info(json)
 		emit('recibido', json, broadcast=True)
 
 @socketio.on('recibido')
 def handle_event(recibido):
-	print(recibido)
+	logging.info(recibido)
 
 @socketio.on('disconnect')
 def test_disconnect():
-    print('Client disconnected')
+    logging.info('Client disconnected')
 
 if __name__ == '__main__':
     socketio.run(app)
